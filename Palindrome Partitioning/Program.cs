@@ -8,44 +8,50 @@ namespace Palindrome_Partitioning
   {
     static void Main(string[] args)
     {
-      string s = "aab";
-      Program p = new Program();
-      p.Partition(s);
+      string s = "aabaa";
+      Solution sol = new Solution();
+      var answer = sol.Partition(s);
+      foreach (var a in answer)
+        Console.WriteLine(string.Join(",", a));
     }
+  }
 
+  public class Solution
+  {
     public IList<IList<string>> Partition(string s)
     {
-      var result = new List<IList<string>>();
+      var res = new List<IList<string>>();
+      Dfs(0, new List<string>());
 
-      Backtracking(s, result, new List<string>(), 0);
-      return result;
-    }
-
-    private void Backtracking(string s, List<IList<string>> result, List<string> temp, int start)
-    {
-      if (start == s.Length)
+      void Dfs(int start, List<string> temp)
       {
-        result.Add(new List<string>(temp));
-      }
-      else
-      {
-        for (int i = start; i < s.Length; i++)
+        if (start >= s.Length)
         {
-          if (IsPalindrom(s, start, i))
+          res.Add(new List<string>(temp));
+          return;
+        }
+
+        for (int end = start; end < s.Length; end++)
+        {
+          if (IsPalindrom(start, end))
           {
-            temp.Add(s.Substring(start, i + 1));
-            Backtracking(s, result, temp, i + 1);
+            temp.Add(s.Substring(start, end - start + 1));
+            Dfs(end + 1, temp);
             temp.RemoveAt(temp.Count - 1);
           }
         }
-      }
-    }
 
-    private bool IsPalindrom(string s, int i , int j)
-    {
-      while(i < j)
-        if (s[i++] != s[j--]) return false;
-      return true;
+      }
+
+      bool IsPalindrom(int start, int end)
+      {
+        while (start < end)
+        {
+          if (s[start++] != s[end--]) return false;
+        }
+        return true;
+      }
+      return res;
     }
   }
 }
